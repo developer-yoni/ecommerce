@@ -1,0 +1,35 @@
+spring:
+
+  servlet:
+    multipart:
+      max-file-size: 15MB
+      max-request-size: 100MB
+
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/ecommerce
+    username: yj
+    password: kkt1326!
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        #        show_sql: true
+        format_sql: true
+        default_batch_fetch_size: 100
+
+#  security:
+#    user:
+#      name: admin
+#      password: 1234
+#      roles: ADMIN
+
+
+
+logging.level:
+  org.hibernate.SQL: debug
+#  org.hibernate.type: trace
