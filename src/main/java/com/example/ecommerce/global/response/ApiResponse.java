@@ -14,7 +14,7 @@ import org.springframework.validation.BindingResult;
 @AllArgsConstructor(access = AccessLevel.PRIVATE) // 생성자를 통한 객체생성을 막음
 @Builder(access = AccessLevel.PRIVATE) // builder를 내부적으로 쓰되, 외부에서는 막음
 @JsonPropertyOrder({"isSuccess", "httpStatus", "apiCode", "result", "invalidInput"}) // 응답으로 나갈 Json 필드 순서 정렬
-@JsonInclude(JsonInclude.Include.NON_NULL) // Json으로 응답이 나갈 때 - null인 필드는(CLASS LEVEL에 붙었으니) 응답으로 포함시키지 않는 어노테이션
+//@JsonInclude(JsonInclude.Include.NON_NULL) // Json으로 응답이 나갈 때 - null인 필드는(CLASS LEVEL에 붙었으니) 응답으로 포함시키지 않는 어노테이션
 public class ApiResponse<T> {
 	
 	private Boolean isSuccess;
