@@ -1,10 +1,15 @@
 spring:
-
   servlet:
     multipart:
       max-file-size: 15MB
       max-request-size: 100MB
 
+  mustache:
+    prefix: classpath:/templates/
+    suffix: .html
+    charset: utf-8
+    servlet:
+      content-type: text/html
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -28,8 +33,11 @@ spring:
 #      password: 1234
 #      roles: ADMIN
 
-
-
 logging.level:
   org.hibernate.SQL: debug
 #  org.hibernate.type: trace
+
+server:
+  servlet:
+    encoding:
+      force-response: true

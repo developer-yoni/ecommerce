@@ -1,17 +1,32 @@
 package com.example.ecommerce.domain;
 
+import com.example.ecommerce.domain.user.dto.request.UserCreateRequestDto;
+import com.example.ecommerce.domain.user.dto.response.UserCreateResponseDto;
+import com.example.ecommerce.domain.user.service.UserService;
+import com.example.ecommerce.global.response.ApiCode;
+import com.example.ecommerce.global.response.ApiResponse;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
+@RequiredArgsConstructor
 public class IndexController {
 
-    @GetMapping("/")
-    @ResponseBody
+    private final UserService userService;
+
+    @GetMapping(value = "/")
+    //@ResponseBody
     public String index() {
-        return "인덱스 페이지입니다.";
+
+        return "index";
     }
 
     @GetMapping("/user")
@@ -36,24 +51,30 @@ public class IndexController {
     }
 
     //SecurityConfig 파일 생성 후 -> 작동 안함
-    @GetMapping("/login")
-    @ResponseBody
+    @GetMapping("/loginForm")
+    public String getLoginForm() {
+
+        return "loginForm";
+    }
+
+    @PostMapping("/login")
     public String login() {
 
-        return "로그인 페이지 입니다";
+        return "loginForm";
     }
 
-    @GetMapping("/join")
-    @ResponseBody
-    public String join() {
 
-        return "회원가입 페이지 입니다";
+    @GetMapping("/joinForm")
+    public String getJoinForm() {
+
+        return "joinForm";
     }
 
-    @PostMapping("/joinProc")
-    @ResponseBody
-    public String joinProc() {
+    @PostMapping("/join")
+    public String join(@Valid  @ModelAttribute UserCreateRequestDto userCreateRequestDto) {
 
-        return "회원가입 진행중";
+        userService.signUp(userCreateRequestDto.getUsername(), userCreateRequestDto.getPassword(), userCreateRequestDto.getEmail());
+
+        return "redirect:/loginForm";
     }
 }
