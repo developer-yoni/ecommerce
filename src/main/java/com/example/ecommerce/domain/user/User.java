@@ -46,7 +46,10 @@ public class User extends BaseEntity {
     @Column(name = "email")
     private String email;
 
-    public static User create(String username, String password, Authority authority, Role role, String email) {
+    @Column(name = "nickname")
+    private String nickname;
+
+    public static User create(String username, String password, Authority authority, Role role, String email, String nickname) {
 
         return User.builder()
                    .username(username)
@@ -54,6 +57,12 @@ public class User extends BaseEntity {
                    .authority(authority)
                    .role(role)
                    .email(email)
+                   .nickname(nickname)
                    .build();
+    }
+
+    public void changeNickname(String nickname) {
+
+        this.nickname = nickname;
     }
 }

@@ -4,6 +4,9 @@ spring:
       max-file-size: 15MB
       max-request-size: 100MB
 
+  transaction:
+    default-timeout: 300 # 초 단위
+
   mustache:
     prefix: classpath:/templates/
     suffix: .html
@@ -16,6 +19,19 @@ spring:
     url: jdbc:mysql://localhost:3306/ecommerce
     username: yj
     password: kkt1326!
+    hikari:
+      # 데이터베이스 연결 풀 최대 크기
+      maximum-pool-size: 30
+      # 데이터베이스 연결 풀 최소 유휴 크기
+      minimum-idle: 10
+      # 데이터베이스 연결 최대 대기 시간 (ms)
+      connection-timeout: 30000
+      # 연결 유효성 검사 쿼리
+      connection-test-query: SELECT 1
+      # 연결 풀에서 유휴 연결을 유지하는 시간 (ms)
+      idle-timeout: 600000
+      # 연결의 최대 수명 (ms)
+      max-lifetime: 1800000
 
   jpa:
     open-in-view: false
@@ -26,6 +42,7 @@ spring:
         #        show_sql: true
         format_sql: true
         default_batch_fetch_size: 100
+      javax.persistence.query.timeout: 60
 
 #  security:
 #    user:
@@ -41,3 +58,19 @@ server:
   servlet:
     encoding:
       force-response: true
+
+
+
+
+# 스프링 비동기 작업을 위한 스레드 풀 설정
+task:
+  execution:
+    pool:
+      # 스레드 풀의 코어 크기
+      core-size: 100
+      # 스레드 풀의 최대 크기
+      max-size: 500
+      # 큐 용량
+      queue-capacity: 100
+      # 스레드 이름 접두사
+      thread-name-prefix: "async-task-"

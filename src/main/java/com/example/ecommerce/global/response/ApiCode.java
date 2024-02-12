@@ -27,11 +27,15 @@ public enum ApiCode {
 
 	CODE_000_0000(true, HttpStatus.OK, "OK", "성공 응답"),
 	CODE_000_0001(true, HttpStatus.CREATED, "CREATED", "리소스 생성 성공"),
+	CODE_000_0002(true, HttpStatus.OK, "ALL_SUCCESS", "전부 성공"),
+	CODE_000_0003(true, HttpStatus.OK, "PARTIALLY_SUCCESS", "일부 성공"),
+	CODE_000_0004(true, HttpStatus.BAD_REQUEST, "ALL_FAIL", "전부 실패"),
 
 	CODE_000_0010(false, HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "500 서버 에러"),
 	CODE_000_0011(false, HttpStatus.BAD_REQUEST, "NOT_FOUND_ENTITY", "엔티티 조회 불가"),
 	CODE_000_0012(false, HttpStatus.BAD_REQUEST, "BEAN_VALIDATION_FAIL", "Bean Validation 에러"),
-	CODE_000_0013(false, HttpStatus.BAD_REQUEST, "ALREADY_EXIST_SAME_USERNAME", "동일한 username으로 가입된 회원이 있습니다");
+	CODE_000_0013(false, HttpStatus.BAD_REQUEST, "ALREADY_EXIST_SAME_USERNAME", "동일한 username으로 가입된 회원이 있습니다"),
+	CODE_000_0014(false, HttpStatus.BAD_REQUEST, "NICKNAME_UPDATE_ERROR", "비동기 처리를 위해 만든 예외");
 	
 	private final Boolean    isSuccess;
 	private final HttpStatus httpStatus;
