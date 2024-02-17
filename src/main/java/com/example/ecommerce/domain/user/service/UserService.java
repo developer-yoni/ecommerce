@@ -50,13 +50,6 @@ public class UserService {
             throw new ApiException(ApiCode.CODE_000_0011, "user 조회 실패");
         });
 
-
-        //2. nickname 변경
-        // 단 memberId가 10의 배수면 예외 발생
-//        if (userId % 10L == 0) {
-//
-//            throw new ApiException(ApiCode.CODE_000_0014, "임시 예외 발생 " + userId);
-//        }
         String originalNickname = user.getNickname();
         user.changeNickname(originalNickname + " 변경");
 
