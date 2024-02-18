@@ -29,7 +29,7 @@ public class User extends BaseEntity {
     @Column(name = "user_id")
     private Long id;
 
-    @Column(name = "username")
+    @Column(name = "username", unique = true)
     private String username;
 
     @Column(name = "password")
@@ -43,7 +43,7 @@ public class User extends BaseEntity {
     @Column(name = "role")
     private Role role;
 
-    @Column(name = "email")
+    @Column(name = "email", unique = true)
     private String email;
 
     public static User create(String username, String password, Authority authority, Role role, String email) {

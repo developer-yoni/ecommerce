@@ -43,7 +43,11 @@ public class SecurityConfig {
                                                                        .anyRequest().permitAll());
 
         // [새로움] 이 설정을 추가함으로써 -> /user , /manager, /admin 으로 인증 없이 이동하려고 하면, /login 페이지로 리다이렉트 된다
-        http.formLogin(formLogin -> formLogin.loginPage("/loginForm"));
+        // [추가] : /login url로 요청이 오면 -> security가 대신 낚아채서 로그인을 진행해준다 -> 그래서 login용 Api를 만들 필요가 없다 -> loginProcessingUrl("/login")
+        // [추가] : 이후 로그인에 성공하면 메인 페이지로 이동하게 한다 by defaultSuccessUrl()
+        http.formLogin(formLogin -> formLogin.loginPage("/loginForm")
+                                              .loginProcessingUrl("/login")
+                                              .defaultSuccessUrl("/"));
 
         return http.build();
     }

@@ -1,19 +1,13 @@
 package com.example.ecommerce.domain;
 
 import com.example.ecommerce.domain.user.dto.request.UserCreateRequestDto;
-import com.example.ecommerce.domain.user.dto.response.UserCreateResponseDto;
 import com.example.ecommerce.domain.user.service.UserService;
-import com.example.ecommerce.global.response.ApiCode;
-import com.example.ecommerce.global.response.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
@@ -74,7 +68,6 @@ public class IndexController {
     public String join(@Valid  @ModelAttribute UserCreateRequestDto userCreateRequestDto) {
 
         userService.signUp(userCreateRequestDto.getUsername(), userCreateRequestDto.getPassword(), userCreateRequestDto.getEmail());
-
         return "redirect:/loginForm";
     }
 }

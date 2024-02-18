@@ -7,9 +7,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum Authority {
 
-    USER("일반 회원"),
-    MANAGER("중간 관리자"),
-    AUTHORITY("관리자");
+    USER("USER","일반 회원"),
+    MANAGER("MANAGER","중간 관리자"),
+    ADMIN("ADMIN", "관리자");
 
+    private final String value;
     private final String description;
 }
