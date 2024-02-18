@@ -3,18 +3,19 @@ package com.example.ecommerce.config.security;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.intercept.AuthorizationFilter;
 
 @Configuration
 // 스프링 시큐리티 필터가 -> 스프링 기본 필터체인에 등록이 된다
 // 그리고 그 시큐리티 필터란, 이 SecurityConfig의 설정 정보에 따라 적절하게 생성된다
 @EnableWebSecurity
 @RequiredArgsConstructor
+@EnableMethodSecurity(securedEnabled = true, prePostEnabled = true) //@Secured 어노테이션을 활성화 하겠다 + @PreAuthorize, @PostAuthorize 어노테이션 활성화
 public class SecurityConfig {
 
     /**
