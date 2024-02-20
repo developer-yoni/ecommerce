@@ -35,6 +35,9 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 
 	implementation 'org.springframework.boot:spring-boot-starter-mustache'
+
+	// Oauth2 Client 의존성 추가
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 }
 
 tasks.named('bootBuildImage') {

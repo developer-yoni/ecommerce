@@ -40,6 +40,8 @@ public class PrincipalDetailsService implements UserDetailsService {
      *  - (인증에 성공했을 경우만)
      *  - (인증에 실패하면, 로딩한 UserDetails는 인증된 Authentication안에 포함되어 SecurityContextHolder안에 포함되지 않는다)
      * */
+
+    // 해당 함수가 종료될 때, @AuthenticationPrincipal이 만들어 진다
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
@@ -47,6 +49,6 @@ public class PrincipalDetailsService implements UserDetailsService {
                                   .orElseThrow(() -> new ApiException(ApiCode.CODE_000_0011,
                                                                       "PrincipalDetailsService.loadUserByUsername() 에서 User 객체 조회 실패"));
 
-        return PrincipalDetails.convert(user);
+        return PrincipalDetails.convertAtFormLogin(user);
     }
 }

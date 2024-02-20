@@ -2,10 +2,17 @@ package com.example.ecommerce.domain;
 
 import com.example.ecommerce.domain.user.dto.request.UserCreateRequestDto;
 import com.example.ecommerce.domain.user.service.UserService;
+import com.example.ecommerce.global.auth.PrincipalDetails;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -25,10 +32,15 @@ public class IndexController {
         return "index";
     }
 
+    /**
+     * form login을 하든, oauth2 login을 하든, PrincipalDetails로 받을 수 있음
+     * */
     @GetMapping("/user")
     @ResponseBody
-    public String user() {
+    public String user(@AuthenticationPrincipal PrincipalDetails principalDetails) {
 
+        System.out.println("**************");
+        System.out.println("user : " + principalDetails.getUser().getUsername());
         return "유저 페이지입니다.";
     }
 
@@ -87,5 +99,33 @@ public class IndexController {
     public String getData() {
 
         return "데이터 정보";
+    }
+
+    /**
+     * 1. ArgumentResolver에 의해 인증에 성공한 Authentication을 직접 파라미터로 받을 수도 있고
+     * 2. Security에서 구현한 AuthenticationPrincipalArugumentResolver에 의해 @AuthenticationPrincipal을 쓰면 직접 UserDetails 구현체를 Controller의 파라미터로 받을 수 도 있음
+     * */
+    @GetMapping("/test/login")
+    @ResponseBody
+    @PreAuthorize(value = "hasAnyAuthority('USER', 'MANAGER', 'ADMIN')")
+    public String testLogin(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+
+        System.out.println("**************************");
+        System.out.println("authentication : " + principalDetails.getUser().getUsername());
+        return "세선졍보 확인하기";
+    }
+
+    /**
+     * 1. ArgumentResolver에 의해 인증에 성공한 Authentication을 에서 Principal구현체를 꺼낸 다음에 -> 이를 OAuth2User 타입으로 casting 하여 사용할 수도 있고
+     * 2. Security에서 구현한 AuthenticationPrincipalArugumentResolver에 의해 @AuthenticationPrincipal을 쓰면 직접 OAuth2User 구현체를 Controller의 파라미터로 받을 수 도 있음
+     * */
+    @GetMapping("/test/oauth/login")
+    @ResponseBody
+    @PreAuthorize(value = "hasAnyAuthority('USER', 'MANAGER', 'ADMIN')")
+    public String testOAuthLogin(@AuthenticationPrincipal OAuth2User oAuth2User) {
+
+        System.out.println("**************************");
+        System.out.println("authentication : " + (oAuth2User.getAttribute("email")));
+        return "세선졍보 확인하기";
     }
 }

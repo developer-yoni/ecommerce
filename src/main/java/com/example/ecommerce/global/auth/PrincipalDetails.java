@@ -2,16 +2,17 @@ package com.example.ecommerce.global.auth;
 
 import com.example.ecommerce.domain.user.User;
 import com.example.ecommerce.global.enums.EntityStatus;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 /**
  * [존재 이유]
@@ -22,20 +23,30 @@ import org.springframework.security.core.userdetails.UserDetails;
  *  - 결론적으로 로그인에 성공했을 때 -> security session안에 넣을 userDetails 정보를 -> 우리가 우리 나름대로 커스텀 하면 좋고 -> 그 대상이 바로 PrincipalDetails (정의하기나름이겠지)
  * */
 
+@Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder(access = AccessLevel.PRIVATE)
-public class PrincipalDetails implements UserDetails {
-
+public class PrincipalDetails implements UserDetails , OAuth2User {
 
     private User user;
+    private Map<String, Object> attributeMap;
 
     /**
      * [생성 factory method]
      * */
-    public static PrincipalDetails convert(@NonNull  User user) {
+
+    public static PrincipalDetails convertAtFormLogin(@NonNull User user) {
 
         return PrincipalDetails.builder()
                                .user(user)
+                               .build();
+    }
+
+    public static PrincipalDetails convertAtOAuthLogin(@NonNull User user, @NonNull Map<String, Object> attributeMap) {
+
+        return PrincipalDetails.builder()
+                               .user(user)
+                               .attributeMap(attributeMap)
                                .build();
     }
 
@@ -92,5 +103,17 @@ public class PrincipalDetails implements UserDetails {
     public boolean isEnabled() {
 
         return user.getEntityStatus().equals(EntityStatus.ACTIVE);
+    }
+
+    @Override
+    public String getName() {
+
+        return (String)attributeMap.get("sub");
+    }
+
+    @Override
+    public Map<String, Object> getAttributes() {
+
+        return attributeMap;
     }
 }
