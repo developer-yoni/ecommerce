@@ -47,28 +47,29 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
          * [registrationId] : 어떤 Oauth Server로 로그인 했는지 확인 가능
          * */
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
+        Provider provider = Provider.convert(registrationId);
+
         OAuth2User oAuth2User = super.loadUser(userRequest);
-        Map<String, Object> userAttrubuteMap = oAuth2User.getAttributes();
-        System.out.println(userAttrubuteMap);
+        Map<String, Object> attributeMap = oAuth2User.getAttributes();
+        System.out.println("*** client_id : " + registrationId);
+        System.out.println("*** attributeMap : " + attributeMap);
 
 
-        User authenticatedUser = userRepository.findByUsernameAndEntityStatus(Provider.getByValue(registrationId) + "_" + (String) oAuth2User.getAttribute("sub"),
+        User authenticatedUser = userRepository.findByUsernameAndEntityStatus(provider + "_" + provider.getProviderId(attributeMap),
                                                                   EntityStatus.ACTIVE).orElseGet(() -> {
 
-            String providerId = (String) oAuth2User.getAttribute("sub");
-            String username = Provider.getByValue(registrationId) + "_" + providerId;
-            String email = (String) oAuth2User.getAttribute("email");
-            User user = User.createAtGoogle(username,
+            User user = User.createAtOAuth2(provider + "_" + provider.getProviderId(attributeMap),
                                             "1",
                                             Authority.USER,
                                             Role.ROLE_USER,
-                                            email,
-                                            providerId);
+                                            provider.getEmail(attributeMap),
+                                            provider,
+                                            provider.getProviderId(attributeMap));
 
             userRepository.save(user);
             return user;
         });
 
-        return PrincipalDetails.convertAtOAuthLogin(authenticatedUser, userAttrubuteMap);
+        return PrincipalDetails.convertAtOAuthLogin(authenticatedUser, attributeMap);
     }
 }

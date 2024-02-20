@@ -20,6 +20,6 @@ public class UserCreateRequestDto {
     private String password;
 
     @NotBlank
-    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$", message = "유효하지 않은 이메일 형식입니다.")
+    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,10}$", message = "유효하지 않은 이메일 형식입니다.")
     private String email;
 }
