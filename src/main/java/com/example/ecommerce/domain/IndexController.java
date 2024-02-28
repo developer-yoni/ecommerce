@@ -128,4 +128,11 @@ public class IndexController {
         System.out.println("authentication : " + (oAuth2User.getAttribute("email")));
         return "세선졍보 확인하기";
     }
+
+    @GetMapping("/login/oauth2/code/kakao")
+    @ResponseBody
+    public String testKakaoLogin() {
+
+        return "kakao";
+    }
 }
