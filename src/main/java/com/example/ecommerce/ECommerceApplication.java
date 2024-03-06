@@ -1,29 +1,22 @@
 package com.example.ecommerce;
 
 import jakarta.annotation.PostConstruct;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.time.ZoneId;
 import java.util.TimeZone;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @EnableJpaAuditing
 @SpringBootApplication
+@Slf4j
 public class ECommerceApplication {
-
-	@Value("${spring.datasource.url}")
-	private String url;
 
 	@PostConstruct
 	public void printTimeZone() {
 
-		//TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
-
-		System.out.println("***** SystemTimeZone : "+ TimeZone.getDefault() + " *********" );
+		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+		log.info("System TimeZone : ", TimeZone.getDefault());
 	}
 
 	public static void main(String[] args) {

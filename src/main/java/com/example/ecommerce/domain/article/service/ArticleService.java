@@ -3,9 +3,7 @@ package com.example.ecommerce.domain.article.service;
 import com.example.ecommerce.domain.article.Article;
 import com.example.ecommerce.domain.article.dto.response.ArticleReadResponseDto;
 import com.example.ecommerce.domain.article.repository.ArticleRepository;
-
 import java.sql.Timestamp;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -28,14 +26,14 @@ public class ArticleService {
     @Transactional
     public void createArticleList() {
 
-        LocalDateTime startAt = LocalDateTime.of(2024, 03, 06, 0, 0, 0);
-        Date startAt2 = Timestamp.valueOf(startAt);
+        LocalDateTime startAt1 = LocalDateTime.of(2024, 03, 06, 0, 0, 0);
+        Date startAt2 = Timestamp.valueOf(startAt1);
         ZonedDateTime startAt3 = ZonedDateTime.of(2024, 03, 06, 0, 0, 0, 0, ZoneId.of("UTC"));
 
         IntStream.range(0, 23).forEach(
                 intValue -> {
 
-                    Article article = Article.create(startAt.plusHours(intValue), plusHour(startAt2, intValue), startAt3.plusHours(intValue));
+                    Article article = Article.create(startAt1.plusHours(intValue), plusHour(startAt2, intValue), startAt3.plusHours(intValue));
                     articleRepository.save(article);
                 }
         );
