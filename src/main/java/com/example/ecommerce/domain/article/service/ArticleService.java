@@ -30,7 +30,7 @@ public class ArticleService {
         Date startAt2 = Timestamp.valueOf(startAt1);
         ZonedDateTime startAt3 = ZonedDateTime.of(2024, 03, 06, 0, 0, 0, 0, ZoneId.of("UTC"));
 
-        IntStream.range(0, 23).forEach(
+        IntStream.range(0, 24).forEach(
                 intValue -> {
 
                     Article article = Article.create(startAt1.plusHours(intValue), plusHour(startAt2, intValue), startAt3.plusHours(intValue));
