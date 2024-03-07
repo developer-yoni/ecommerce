@@ -16,7 +16,7 @@ public class ECommerceApplication {
 	public void printTimeZone() {
 
 		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
-		log.info("System TimeZone : ", TimeZone.getDefault());
+		log.info(" *** System TimeZone = {}", TimeZone.getDefault());
 	}
 
 	public static void main(String[] args) {

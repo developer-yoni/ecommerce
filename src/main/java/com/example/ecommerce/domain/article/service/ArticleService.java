@@ -28,7 +28,7 @@ public class ArticleService {
 
         LocalDateTime startAt1 = LocalDateTime.of(2024, 03, 06, 0, 0, 0);
         Date startAt2 = Timestamp.valueOf(startAt1);
-        ZonedDateTime startAt3 = ZonedDateTime.of(2024, 03, 06, 0, 0, 0, 0, ZoneId.of("UTC"));
+        ZonedDateTime startAt3 = ZonedDateTime.of(2024, 03, 06, 0, 0, 0, 0, ZoneId.systemDefault());
 
         IntStream.range(0, 24).forEach(
                 intValue -> {

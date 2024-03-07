@@ -47,7 +47,7 @@ public class ArticleController {
     @GetMapping("/articles/v2")
     public ResponseEntity<List<ArticleReadResponseDto>> getArticleListV2(@ModelAttribute ArticleReadRequestDtoV2 readRequestDto) {
 
-        List<ArticleReadResponseDto> articleReadResponseDtoList = articleService.getArticleListV2(Timestamp.valueOf(readRequestDto.getStartDateTime()), Timestamp.valueOf(readRequestDto.getEndDateTime()));
+        List<ArticleReadResponseDto> articleReadResponseDtoList = articleService.getArticleListV2(readRequestDto.getStartDateTime(), readRequestDto.getEndDateTime());
         return ResponseEntity.ok(articleReadResponseDtoList);
     }
 
