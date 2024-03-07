@@ -8,7 +8,7 @@ spring:
 
   datasource:
     driver-class-name: com.p6spy.engine.spy.P6SpyDriver
-    url: jdbc:p6spy:mysql://localhost:3306/ecommerce?serverTimezone=Asia/Seoul
+    url: jdbc:p6spy:mysql://localhost:3306/ecommerce?serverTimezone=UTC
     #url: jdbc:p6spy:postgresql://localhost:5432/ecommerce
     username: yj
     password: kkt1326!
@@ -22,7 +22,7 @@ spring:
         show_sql: true
         format_sql: true
         default_batch_fetch_size: 100
-        jdbc.time_zone: Asia/Seoul
+        jdbc.time_zone: UTC
     show-sql: true
 
 #  security:

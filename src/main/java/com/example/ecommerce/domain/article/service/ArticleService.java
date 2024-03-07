@@ -28,7 +28,8 @@ public class ArticleService {
 
         LocalDateTime startAt1 = LocalDateTime.of(2024, 03, 06, 0, 0, 0);
         Date startAt2 = Timestamp.valueOf(startAt1);
-        ZonedDateTime startAt3 = ZonedDateTime.of(2024, 03, 06, 0, 0, 0, 0, ZoneId.systemDefault());
+        // ZonedDateTime의 경우, Server에서 Database로 넘어가면서 시간이 변환될 때, Springboot의 timezone을 따르는게 아니라, 생성시 이 ZoneId의 timezone을 따른다 (당연히!)
+        ZonedDateTime startAt3 = ZonedDateTime.of(2024, 03, 06, 0, 0, 0, 0, ZoneId.of("UTC"));
 
         IntStream.range(0, 24).forEach(
                 intValue -> {

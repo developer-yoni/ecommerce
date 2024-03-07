@@ -15,7 +15,7 @@ public class ECommerceApplication {
 	@PostConstruct
 	public void printTimeZone() {
 
-		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+		TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
 		log.info(" *** System TimeZone = {}", TimeZone.getDefault());
 	}
 

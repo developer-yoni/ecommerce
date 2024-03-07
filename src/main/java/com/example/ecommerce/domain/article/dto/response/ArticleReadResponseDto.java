@@ -16,11 +16,16 @@ import lombok.Getter;
 public class ArticleReadResponseDto {
 
     private Long articleId;
-    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss", timezone="UTC")
+    // 사실 LocalDateTime의 시간은 잘 모르겠다 -> 유력하게 유추되는건, dabase의 timezone이 어떻든, LocalDateTime은 Springboot의 Timezone을 따른다
+    // 따라서 Springboot의 timezone이 UTC라면 그냥 LocalDateTime 쓰면 되고 (사실 안변하니까 가장 안전)
+    // 그렇지 않다면 응답으로 UTC로 fix할 수 있는 Date나 ZonedDateTime이 적합하지 않을까
+    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss", timezone="UTC") // LocalDateTime은 @JsonFormat의 timezone에 영향 안받음
     private LocalDateTime time1;
-    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss", timezone="UTC")
-    private Date time2; // DB에는 UTC로 저장되어 있어도, 응답 time2는 한국시간으로 자동 변환됨
-    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss", timezone="UTC")
+
+    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss", timezone="UTC") // Date는 @JsonFormat의 timezone에 영향 받아서 변환됨
+    private Date time2;
+
+    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss", timezone="UTC") // ZonedDateTime은 @JsonFormat의 timezone에 영향 받아서 변환됨
     private ZonedDateTime time3;
 
 
