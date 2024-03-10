@@ -52,7 +52,7 @@ public class SecurityConfig {
         //7. Custom Servlet Filter를 SecurityFilterChain에 추가
         // 이때 순서는 -> SecurityFilterChain의 가장 마지막인 FilterSecurityInterceptor 뒤에 추가
         // 그래도 무조건 SecurityFilterChain이 ServletFilter보다 먼저 순서하므로 -> 이 MyFilter3가 먼저 걸리고 -> 이후 ServletFilter들이 걸린다
-        http.addFilterAfter(new MyFilter3(), FilterSecurityInterceptor.class);
+        http.addFilterAfter(new MyFilter1(), FilterSecurityInterceptor.class);
 
         return http.build();
     }
