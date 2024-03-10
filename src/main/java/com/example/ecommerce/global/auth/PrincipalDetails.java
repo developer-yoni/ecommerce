@@ -4,6 +4,7 @@ import com.example.ecommerce.domain.user.User;
 import com.example.ecommerce.domain.user.enums.Authority;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,6 +19,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 public class PrincipalDetails implements UserDetails {
 
     private final User user;
+    private Long id;
+    private String username;
+    private Authority authority;
 
     public static PrincipalDetails convert(User user) {
 
@@ -26,11 +30,19 @@ public class PrincipalDetails implements UserDetails {
                                .build();
     }
 
+    public static PrincipalDetails successAuthorize(Long id, String username, Authority authority) {
+
+        return PrincipalDetails.builder()
+                               .id(id)
+                               .username(username)
+                               .authority(authority)
+                               .build();
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
-        Authority authority = user.getAuthority();
-        return List.of(authority);
+        return Objects.nonNull(user) ? List.of(user.getAuthority()) : List.of(authority);
     }
 
     @Override

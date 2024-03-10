@@ -31,7 +31,8 @@ public enum ApiCode {
 	CODE_000_0010(false, HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR"),
 	CODE_000_0011(false, HttpStatus.BAD_REQUEST, "NOT_FOUND_ENTITY"),
 	CODE_000_0012(false, HttpStatus.BAD_REQUEST, "BEAN_VALIDATION_FAIL"),
-	CODE_000_0013(false, HttpStatus.BAD_REQUEST, "ALREADY_EXISTS_USERNAME");
+	CODE_000_0013(false, HttpStatus.BAD_REQUEST, "ALREADY_EXISTS_USERNAME"),
+	CODE_000_0014(false, HttpStatus.BAD_REQUEST, "INVALID_AUTHORITY");
 	
 	private final Boolean    isSuccess;
 	private final HttpStatus httpStatus;

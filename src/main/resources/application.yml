@@ -15,7 +15,7 @@ spring:
   jpa:
     open-in-view: false
     hibernate:
-      ddl-auto: validate
+      ddl-auto: create
 
     properties:
       hibernate:
@@ -34,6 +34,7 @@ spring:
 
 logging.level:
   org.hibernate.SQL: debug
+  org.springframework.security: DEBUG
 #  org.hibernate.type: trace
 
 jwt:

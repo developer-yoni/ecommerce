@@ -54,12 +54,11 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         User user = principalDetails.getUser();
 
         //2. user의 id, username, authority 정보를 claim으로 담는 JWT를 생성한다
-        System.out.println("***** " + jwtSecret);
         String jwt = Jwts.builder()
                          .setSubject(String.valueOf(user.getId())) // 토큰의 주제 설정 (여기서는 userId 사용)
                          .setExpiration(new Date(System.currentTimeMillis() + (60000*10))) // 토큰의 만료 시간 설정 (여기서는 현재로부터 10분)
                          .claim("username", user.getUsername())
-                         .claim("authority", user.getAuthority()) // 권한(역할) 정보 포함
+                         .claim("authority", user.getAuthority().getValue()) // 권한(역할) 정보 포함
                          .signWith(SignatureAlgorithm.HS512, Base64.encodeBase64String(jwtSecret.getBytes())) // HS512 알고리즘과 비밀 키를 사용하여 서명
                          .compact();
 
