@@ -1,5 +1,6 @@
 package com.example.ecommerce.config.security.filterchain;
 
+import com.example.ecommerce.domain.user.User;
 import com.example.ecommerce.domain.user.enums.Authority;
 import com.example.ecommerce.global.auth.PrincipalDetails;
 import io.jsonwebtoken.Claims;
@@ -65,10 +66,13 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             Long id = Long.valueOf(claims.getSubject());
             String username = claims.get("username", String.class);
             Authority authority = Authority.convert(claims.get("authority", String.class));
+            User user = User.successAuthorize(id, username, authority);
+
             UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken
-                    = new UsernamePasswordAuthenticationToken(PrincipalDetails.successAuthorize(id, username, authority),
+                    = new UsernamePasswordAuthenticationToken(PrincipalDetails.convert(user),
                                                               null, List.of(authority));
             SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+
             System.out.println("***** 권한처리 2_1. 올바른 사용자 *****");
             chain.doFilter(request, response);
         } catch (Exception e) {

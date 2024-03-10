@@ -19,9 +19,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 public class PrincipalDetails implements UserDetails {
 
     private final User user;
-    private Long id;
-    private String username;
-    private Authority authority;
 
     public static PrincipalDetails convert(User user) {
 
@@ -30,19 +27,10 @@ public class PrincipalDetails implements UserDetails {
                                .build();
     }
 
-    public static PrincipalDetails successAuthorize(Long id, String username, Authority authority) {
-
-        return PrincipalDetails.builder()
-                               .id(id)
-                               .username(username)
-                               .authority(authority)
-                               .build();
-    }
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
-        return Objects.nonNull(user) ? List.of(user.getAuthority()) : List.of(authority);
+        return List.of(user.getAuthority());
     }
 
     @Override

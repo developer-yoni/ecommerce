@@ -63,4 +63,14 @@ public class User extends BaseEntity {
                    .authority(authority)
                    .build();
     }
+
+    public static User successAuthorize(Long id, String username, Authority authority) {
+
+        return User.builder()
+                   .id(id)
+                   .username(username)
+                   .password("")
+                   .authority(authority)
+                   .build();
+    }
 }

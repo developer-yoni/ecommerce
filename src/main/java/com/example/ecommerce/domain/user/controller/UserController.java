@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,11 +32,10 @@ public class UserController {
     }
 
     @GetMapping("/api/v1/user")
-    public ResponseEntity getUserInfo(Authentication authentication) {
+    public ResponseEntity getUserInfo(@AuthenticationPrincipal PrincipalDetails principalDetails) {
 
-        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
-        return ResponseEntity.ok(UserReadResponseDto.toDto(principalDetails.getId(),
-                                                           principalDetails.getUsername(),
-                                                           principalDetails.getAuthority()));
+        return ResponseEntity.ok(UserReadResponseDto.toDto(principalDetails.getUser().getId(),
+                                                           principalDetails.getUser().getUsername(),
+                                                           principalDetails.getUser().getAuthority()));
     }
 }
