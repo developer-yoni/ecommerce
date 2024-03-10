@@ -15,12 +15,14 @@ spring:
   jpa:
     open-in-view: false
     hibernate:
-      ddl-auto: create
+      ddl-auto: validate
+
     properties:
       hibernate:
         #        show_sql: true
         format_sql: true
         default_batch_fetch_size: 100
+        jdbc.time_zone: UTC
 
 #  security:
 #    user:
@@ -33,3 +35,7 @@ spring:
 logging.level:
   org.hibernate.SQL: debug
 #  org.hibernate.type: trace
+
+jwt:
+  secret: BwQ4AQVujYJQi0xD2JQrsds_UvIFdFCPs4FBZD6sL1TXyJfonZyHVTPuiW9vqXdZ2BDhpRsFErhJrPZCBfebXQ==
+

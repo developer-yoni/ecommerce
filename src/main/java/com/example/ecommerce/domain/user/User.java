@@ -4,6 +4,8 @@ import com.example.ecommerce.domain.BaseEntity;
 import com.example.ecommerce.domain.user.enums.Authority;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -34,6 +36,7 @@ public class User extends BaseEntity {
     private String password;
 
     @Column(name = "authority")
+    @Enumerated(value = EnumType.STRING)
     private Authority authority;
 
     /**
@@ -52,4 +55,12 @@ public class User extends BaseEntity {
                    .build();
     }
 
+    public static User createAtSignin(String username, String password, Authority authority) {
+
+        return User.builder()
+                   .username(username)
+                   .password(password)
+                   .authority(authority)
+                   .build();
+    }
 }

@@ -1,16 +1,18 @@
 package com.example.ecommerce.config.security;
 
 import com.example.ecommerce.config.filter.MyFilter1;
-import com.example.ecommerce.config.filter.MyFilter3;
+import com.example.ecommerce.config.security.filterchain.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.filter.CorsFilter;
 
 @Configuration
@@ -19,6 +21,17 @@ import org.springframework.web.filter.CorsFilter;
 public class SecurityConfig {
 
     private final CorsFilter corsFilter;
+    private final AuthenticationConfiguration authenticationConfiguration;
+
+    @Value("${jwt.secret}")
+    private String jwtSecret;
+
+    // AuthenticationManager 빈을 등록합니다.
+    @Bean
+    public AuthenticationManager authenticationManager() throws Exception {
+
+        return authenticationConfiguration.getAuthenticationManager();
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -29,7 +42,7 @@ public class SecurityConfig {
         //2. session disable
         http.sessionManagement(sessionManagementCustomizer -> sessionManagementCustomizer.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-        //3. form login disable
+        //3. form login disable -> 기본적인 formlogin은 session기반의 stateful 방식이기에 disalbe 시킴
         http.formLogin(formLoginCustomizer -> formLoginCustomizer.disable());
 
         //4. http Basic disable
@@ -53,6 +66,9 @@ public class SecurityConfig {
         // 이때 순서는 -> SecurityFilterChain의 가장 마지막인 FilterSecurityInterceptor 뒤에 추가
         // 그래도 무조건 SecurityFilterChain이 ServletFilter보다 먼저 순서하므로 -> 이 MyFilter3가 먼저 걸리고 -> 이후 ServletFilter들이 걸린다
         http.addFilterAfter(new MyFilter1(), FilterSecurityInterceptor.class);
+
+        //8. JwtAuthenticationFilter를 AuthenticationFilter로 등록
+        http.addFilter(new JwtAuthenticationFilter(authenticationManager(), jwtSecret));
 
         return http.build();
     }
