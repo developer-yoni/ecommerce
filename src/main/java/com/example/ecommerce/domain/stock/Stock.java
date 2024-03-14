@@ -9,6 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,6 +31,9 @@ public class Stock extends BaseEntity {
 
     @Column(name = "inventory_quantity")
     private Long inventoryQuantity;
+
+    @Version
+    private Long version;
 
     /**
      * [Foreign key]

@@ -7,35 +7,20 @@ import com.example.ecommerce.global.response.ApiCode;
 import com.example.ecommerce.global.response.ApiException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class StockService {
+public class PessimisticLockStockService {
 
     private final StockRepository stockRepository;
 
     @Transactional
-    public synchronized void decrease(Long id, Long quantity) {
+    public void decrease(Long id, Long quantity) {
 
         //1. stock 조회
-        Stock stock = stockRepository.findByIdAndEntityStatus(id, EntityStatus.ACTIVE)
-                                     .orElseThrow(() -> new ApiException(ApiCode.CODE_000_0011, "재고 감소시, 요청값으로 들어온 stockId로 Stock 조회 실패"));
-
-        //2. 재고 감소
-        stock.decreaseInventoryQuantity(quantity);
-
-        //3. 갱신된 값을 저장
-        stockRepository.saveAndFlush(stock);
-    }
-
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void decreaseForRequiresNewTransaction(Long id, Long quantity) {
-
-        //1. stock 조회
-        Stock stock = stockRepository.findByIdAndEntityStatus(id, EntityStatus.ACTIVE)
+        Stock stock = stockRepository.findByIdAndEntityStatusWithPessimisticLock(id, EntityStatus.ACTIVE)
                                      .orElseThrow(() -> new ApiException(ApiCode.CODE_000_0011, "재고 감소시, 요청값으로 들어온 stockId로 Stock 조회 실패"));
 
         //2. 재고 감소
