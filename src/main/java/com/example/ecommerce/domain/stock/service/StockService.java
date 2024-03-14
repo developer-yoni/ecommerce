@@ -18,7 +18,7 @@ public class StockService {
     private final StockRepository stockRepository;
 
     @Transactional
-    public synchronized void decrease(Long id, Long quantity) {
+    public synchronized void decreaseSynchronized(Long id, Long quantity) {
 
         //1. stock 조회
         Stock stock = stockRepository.findByIdAndEntityStatus(id, EntityStatus.ACTIVE)
@@ -33,6 +33,20 @@ public class StockService {
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void decreaseForRequiresNewTransaction(Long id, Long quantity) {
+
+        //1. stock 조회
+        Stock stock = stockRepository.findByIdAndEntityStatus(id, EntityStatus.ACTIVE)
+                                     .orElseThrow(() -> new ApiException(ApiCode.CODE_000_0011, "재고 감소시, 요청값으로 들어온 stockId로 Stock 조회 실패"));
+
+        //2. 재고 감소
+        stock.decreaseInventoryQuantity(quantity);
+
+        //3. 갱신된 값을 저장
+        stockRepository.saveAndFlush(stock);
+    }
+
+    @Transactional
+    public void decrease(Long id, Long quantity) {
 
         //1. stock 조회
         Stock stock = stockRepository.findByIdAndEntityStatus(id, EntityStatus.ACTIVE)
