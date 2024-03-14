@@ -63,6 +63,10 @@ public class Stock extends BaseEntity {
             throw new ApiException(ApiCode.CODE_000_0014, "남은 재고보다 더 많은 수량 주문 불가");
         }
 
+        System.out.println("************************");
+        System.out.println("Thrad Name : " + Thread.currentThread().getName() + " / Before Decrease Inventory Quantity : " + this.inventoryQuantity );
         this.inventoryQuantity -= inventoryQuantity;
+        System.out.println("Thrad Name : " + Thread.currentThread().getName() + " / After Decrease Inventory Quantity : " + this.inventoryQuantity );
+        System.out.println("=======================");
     }
 }
