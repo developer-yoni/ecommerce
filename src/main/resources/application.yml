@@ -12,7 +12,8 @@ spring:
     username: root
     password: kkt1326!
     hikari:
-      maximum-pool-size: 40
+      maximum-pool-size: 1
+      idle-timeout: 10
 
   jpa:
     open-in-view: false

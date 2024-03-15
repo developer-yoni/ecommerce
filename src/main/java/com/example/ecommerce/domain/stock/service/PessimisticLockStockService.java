@@ -16,6 +16,7 @@ public class PessimisticLockStockService {
 
     private final StockRepository stockRepository;
 
+    // PessimisticLock은 트랜잭션이 커밋이나 롤백되면 자동 반환되니 -> 하나의 트랜잭션으로 묶는게 중요하다
     @Transactional
     public void decrease(Long id, Long quantity) {
 
@@ -28,5 +29,7 @@ public class PessimisticLockStockService {
 
         //3. 갱신된 값을 저장
         stockRepository.saveAndFlush(stock);
+
+        // 마지막에 트랜잭션 커밋 되야 -> Pessimistic Lock이 반환된다
     }
 }
