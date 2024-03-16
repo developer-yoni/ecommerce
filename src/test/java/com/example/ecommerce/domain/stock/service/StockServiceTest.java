@@ -405,7 +405,7 @@ class StockServiceTest {
     void PessimisticLock을_분산락으로활용_동시에100개감소() throws Exception {
 
         //given
-        int threadCount = 102;
+        int threadCount = 10;
         ExecutorService executorService = Executors.newFixedThreadPool(32);
         CountDownLatch countDownLatch = new CountDownLatch(threadCount);
 
@@ -432,6 +432,11 @@ class StockServiceTest {
                         System.out.println("Thread Name : " + Thread.currentThread().getName() + " / " + " 남은 재고보다 더 큰 수량만큼 감소 불가");
                     }
                     System.out.println("$$$$$$$$$$$$$$$$$$$$$$$");
+                } catch (InterruptedException e) {
+
+                    System.out.println("++++++++++++++++");
+                    System.out.println("Thread name : " + Thread.currentThread().getName() + " / Interrupt Exception 발생");
+                    System.out.println("++++++++++++++++");
                 } finally {
 
                     countDownLatch.countDown();

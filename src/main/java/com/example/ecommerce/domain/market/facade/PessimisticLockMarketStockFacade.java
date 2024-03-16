@@ -26,6 +26,6 @@ public class PessimisticLockMarketStockFacade {
         });
 
         //2. stockId로 stock의 inventoryQuantity 감소
-        stockService.decreaseForRequiresNewTransaction(stockId, quantity);
+        stockService.decrease(stockId, quantity);
     }
 }

@@ -20,7 +20,7 @@ public class PessimisticLockMarketService {
     private final StockRepository stockRepository;
 
     @Transactional
-    public void decrease(Long marketId, Long stockId, Long quantity) {
+    public void decrease(Long marketId, Long stockId, Long quantity) throws InterruptedException {
 
         //1. marketId로 PessimisticLock을 걸고
         Market market = marketRepository.findByIdAndEntityStatusWithPessimisticLock(marketId, EntityStatus.ACTIVE).orElseThrow(() -> {
@@ -33,6 +33,7 @@ public class PessimisticLockMarketService {
         stock.decreaseInventoryQuantity(quantity);
 
         //3. saveAndFlush
-        stockRepository.saveAndFlush(stock);
+        //stockRepository.saveAndFlush(stock);
+        Thread.sleep(1000);
     }
 }
