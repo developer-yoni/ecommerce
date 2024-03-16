@@ -4,6 +4,10 @@ import static com.example.ecommerce.global.response.ApiCode.CODE_000_0013;
 import static com.example.ecommerce.global.response.ApiCode.CODE_000_0014;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
+import com.example.ecommerce.domain.market.Market;
+import com.example.ecommerce.domain.market.facade.PessimisticLockMarketStockFacade;
+import com.example.ecommerce.domain.market.repository.MarketRepository;
+import com.example.ecommerce.domain.market.service.PessimisticLockMarketService;
 import com.example.ecommerce.domain.stock.Stock;
 import com.example.ecommerce.domain.stock.facade.LettuceLockStockFacade;
 import com.example.ecommerce.domain.stock.facade.NamedLockStockFacade;
@@ -48,17 +52,30 @@ class StockServiceTest {
     @Autowired
     private RedissonLockStockFacade redissonLockStockFacade;
 
+    @Autowired
+    private MarketRepository marketRepository;
+
+    @Autowired
+    private PessimisticLockMarketService pessimisticLockMarketService;
+
+    @Autowired
+    private PessimisticLockMarketStockFacade pessimisticLockMarketStockFacade;
+
     @BeforeEach
     public void beforeEach() {
 
         Stock stock = Stock.create(1L, 100L);
         stockRepository.save(stock);
+
+        Market market = Market.create();
+        marketRepository.save(market);
     }
 
     @AfterEach
     public void afterEach() {
 
         stockRepository.deleteAll();
+        marketRepository.deleteAll();
     }
 
     @Test
@@ -372,6 +389,111 @@ class StockServiceTest {
         }
         countDownLatch.await(); // 모든 쓰레드가 다 리턴할 때까지 대기
 
+        long endTime = System.currentTimeMillis(); // 테스트 종료 시간 기록
+        System.out.println("[테스트 시간] : " + (endTime - startTime) + " ms");
+
+        //then : 0개가 남는가
+        Stock stock = stockRepository.findByIdAndEntityStatus(1L, EntityStatus.ACTIVE).orElseThrow();
+        assertThat(stock.getInventoryQuantity()).isEqualTo(0L);
+    }
+
+    /**
+     * [성공]
+     * */
+    @Test
+    @DisplayName("재고 감소4_1. 하나의 트랜잭션에서 PessimisticLock을 분산락으로 활용하는 동시성 테스트")
+    void PessimisticLock을_분산락으로활용_동시에100개감소() throws Exception {
+
+        //given
+        int threadCount = 102;
+        ExecutorService executorService = Executors.newFixedThreadPool(32);
+        CountDownLatch countDownLatch = new CountDownLatch(threadCount);
+
+        long startTime = System.currentTimeMillis(); // 테스트 시작 시간 기록
+
+        //when : 100개에서 동시에 100개를 감소시키면
+        for (int i = 0; i < threadCount; i++) {
+
+            executorService.submit(() -> {
+
+                try {
+
+                    pessimisticLockMarketService.decrease(1L, 1L, 1L);
+                } catch (ApiException e) {
+
+                    System.out.println("$$$$$$$$$$$$$$$$$$$$$$$");
+                    if (e.getApiCode().equals(CODE_000_0013)) {
+
+                        System.out.println("Thread Name : " + Thread.currentThread().getName() + " / " + " 남은 재고가 0개 이므로 재고 감소 실패");
+                    }
+
+                    if (e.getApiCode().equals(CODE_000_0014)) {
+
+                        System.out.println("Thread Name : " + Thread.currentThread().getName() + " / " + " 남은 재고보다 더 큰 수량만큼 감소 불가");
+                    }
+                    System.out.println("$$$$$$$$$$$$$$$$$$$$$$$");
+                } finally {
+
+                    countDownLatch.countDown();
+                }
+            });
+        }
+        countDownLatch.await(); // 모든 쓰레드가 다 리턴할 때까지 대기
+        long endTime = System.currentTimeMillis(); // 테스트 종료 시간 기록
+        System.out.println("[테스트 시간] : " + (endTime - startTime) + " ms");
+
+        //then : 0개가 남는가
+        Stock stock = stockRepository.findByIdAndEntityStatus(1L, EntityStatus.ACTIVE).orElseThrow();
+        assertThat(stock.getInventoryQuantity()).isEqualTo(0L);
+    }
+
+    /**
+     * [실패]
+     * */
+    @Test
+    @DisplayName("재고 감소4_2. 분리된 트랜잭션에서 PessimisticLock을 분산락으로 활용하는 동시성 테스트")
+    void PessimisticLock을_별도의트랜잭션에서사용하여_분산락으로활용_동시에100개감소() throws Exception {
+
+        //given
+        int threadCount = 102;
+        ExecutorService executorService = Executors.newFixedThreadPool(32);
+        CountDownLatch countDownLatch = new CountDownLatch(threadCount);
+
+        long startTime = System.currentTimeMillis(); // 테스트 시작 시간 기록
+
+        //when : 100개에서 동시에 100개를 감소시키면
+        for (int i = 0; i < threadCount; i++) {
+
+            executorService.submit(() -> {
+
+                try {
+
+                    pessimisticLockMarketStockFacade.decrease(1L, 1L, 1L);
+                } catch (ApiException e) {
+
+                    System.out.println("$$$$$$$$$$$$$$$$$$$$$$$");
+                    if (e.getApiCode().equals(CODE_000_0013)) {
+
+                        System.out.println("Thread Name : " + Thread.currentThread().getName() + " / " + " 남은 재고가 0개 이므로 재고 감소 실패");
+                    }
+
+                    if (e.getApiCode().equals(CODE_000_0014)) {
+
+                        System.out.println("Thread Name : " + Thread.currentThread().getName() + " / " + " 남은 재고보다 더 큰 수량만큼 감소 불가");
+                    }
+                    System.out.println("$$$$$$$$$$$$$$$$$$$$$$$");
+                } catch (InterruptedException e) {
+
+                    System.out.println("++++++++++++++++++++++++");
+                    System.out.println("InterruptException 발생");
+                    System.out.println("++++++++++++++++++++++++");
+                } finally {
+
+                    countDownLatch.countDown();
+                }
+            });
+        }
+        countDownLatch.await(); // 모든 쓰레드가 다 리턴할 때까지 대기
         long endTime = System.currentTimeMillis(); // 테스트 종료 시간 기록
         System.out.println("[테스트 시간] : " + (endTime - startTime) + " ms");
 
