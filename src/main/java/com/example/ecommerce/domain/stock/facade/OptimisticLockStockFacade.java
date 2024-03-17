@@ -16,7 +16,7 @@ public class OptimisticLockStockFacade {
      * [@Transactional을 붙이면 무한루프 빠짐]
      * : 재시도 로직까지 하나의 트랜잭션으로 묶이게 되면서 -> Entity Manager가 비워지지 않아 -> 이전에 실패한 version의 Stock을 가지고 계속 시도하니 , 무한루프에 빠진다
      * */
-    @Transactional
+    //@Transactional
     public void decrease(Long id, Long quantity) throws InterruptedException {
 
         // update 실패시 재시도
