@@ -397,7 +397,7 @@ class StockServiceTest {
     void RedissonLock으로_동시성처리후_동시에100개감소() throws Exception {
 
         //given
-        int threadCount = 1000;
+        int threadCount = 100;
         ExecutorService executorService = Executors.newFixedThreadPool(32);
         CountDownLatch countDownLatch = new CountDownLatch(threadCount);
 
@@ -453,7 +453,7 @@ class StockServiceTest {
     void PessimisticLock을_분산락으로활용_동시에100개감소() throws Exception {
 
         //given
-        int threadCount = 10;
+        int threadCount = 100;
         ExecutorService executorService = Executors.newFixedThreadPool(32);
         CountDownLatch countDownLatch = new CountDownLatch(threadCount);
 
