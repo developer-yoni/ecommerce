@@ -61,6 +61,7 @@ class StockServiceTest {
     @Autowired
     private PessimisticLockMarketStockFacade pessimisticLockMarketStockFacade;
 
+
     @BeforeEach
     public void beforeEach() {
 
@@ -91,6 +92,53 @@ class StockServiceTest {
         assertThat(stock.getInventoryQuantity()).isEqualTo(99L);
     }
 
+    @Test
+    @DisplayName("재고 감소0. 동시성처리없이 100개 동시 감소")
+    void 동시성처리없이_동시에100개감소() throws Exception {
+
+        //given
+        int threadCount = 100;
+        ExecutorService executorService = Executors.newFixedThreadPool(32);
+        CountDownLatch countDownLatch = new CountDownLatch(threadCount);
+
+        long startTime = System.currentTimeMillis(); // 테스트 시작 시간 기록
+
+        //when : 100개에서 동시에 100개를 감소시키면
+        for (int i = 0; i < threadCount; i++) {
+
+            executorService.submit(() -> {
+
+                try {
+
+                    stockService.decrease(1L, 1L);
+                } catch (ApiException e) {
+
+                    System.out.println("$$$$$$$$$$$$$$$$$$$$$$$");
+                    if (e.getApiCode().equals(CODE_000_0013)) {
+
+                        System.out.println("Thread Name : " + Thread.currentThread().getName() + " / " + " 남은 재고가 0개 이므로 재고 감소 실패");
+                    }
+
+                    if (e.getApiCode().equals(CODE_000_0014)) {
+
+                        System.out.println("Thread Name : " + Thread.currentThread().getName() + " / " + " 남은 재고보다 더 큰 수량만큼 감소 불가");
+                    }
+                    System.out.println("$$$$$$$$$$$$$$$$$$$$$$$");
+                } finally {
+
+                    countDownLatch.countDown();
+                }
+            });
+        }
+        countDownLatch.await(); // 모든 쓰레드가 다 리턴할 때까지 대기
+        long endTime = System.currentTimeMillis(); // 테스트 종료 시간 기록
+        System.out.println("수행 시간: " + (endTime - startTime) + " ms");
+
+        //then : 0개가 남는가
+        Stock stock = stockRepository.findByIdAndEntityStatus(1L, EntityStatus.ACTIVE).orElseThrow();
+        assertThat(stock.getInventoryQuantity()).isEqualTo(0L);
+    }
+
     /**
      * [문제점]
      * 1. 단일서버에만 제한
@@ -98,7 +146,7 @@ class StockServiceTest {
      * */
     @Test
     @DisplayName("재고 감소1. synchronized로 동시성 처리한 100개 동시 감소")
-    void 동시성처리없이_동시에100개감소() throws Exception {
+    void synchronized키워드를써서_동시에100개감소() throws Exception {
 
         //given
         int threadCount = 100;
@@ -136,7 +184,7 @@ class StockServiceTest {
         }
         countDownLatch.await(); // 모든 쓰레드가 다 리턴할 때까지 대기
         long endTime = System.currentTimeMillis(); // 테스트 종료 시간 기록
-        System.out.println("트 : " + (endTime - startTime) + " ms");
+        System.out.println("수행 시간: " + (endTime - startTime) + " ms");
 
         //then : 0개가 남는가
         Stock stock = stockRepository.findByIdAndEntityStatus(1L, EntityStatus.ACTIVE).orElseThrow();
@@ -148,7 +196,7 @@ class StockServiceTest {
     void PessimisticLock으로_동시성처리후_동시에100개감소() throws Exception {
 
         //given
-        int threadCount = 1;
+        int threadCount = 100;
         ExecutorService executorService = Executors.newFixedThreadPool(32);
         CountDownLatch countDownLatch = new CountDownLatch(threadCount);
 
@@ -187,7 +235,7 @@ class StockServiceTest {
 
         //then : 0개가 남는가
         Stock stock = stockRepository.findByIdAndEntityStatus(1L, EntityStatus.ACTIVE).orElseThrow();
-        assertThat(stock.getInventoryQuantity()).isEqualTo(99L);
+        assertThat(stock.getInventoryQuantity()).isEqualTo(0L);
     }
 
     @Test

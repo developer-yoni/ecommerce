@@ -35,6 +35,7 @@ public class Stock extends BaseEntity {
     @Version
     private Long version;
 
+
     /**
      * [Foreign key]
      * */
@@ -68,9 +69,9 @@ public class Stock extends BaseEntity {
         }
 
         System.out.println("************************");
-        System.out.println("Thrad Name : " + Thread.currentThread().getName() + " / Before Decrease Inventory Quantity : " + this.inventoryQuantity );
+        System.out.println("Thread Name : " + Thread.currentThread().getName() + " / Before Decrease Inventory Quantity : " + this.inventoryQuantity );
         this.inventoryQuantity -= inventoryQuantity;
-        System.out.println("Thrad Name : " + Thread.currentThread().getName() + " / After Decrease Inventory Quantity : " + this.inventoryQuantity );
+        System.out.println("Thread Name : " + Thread.currentThread().getName() + " / After Decrease Inventory Quantity : " + this.inventoryQuantity );
         System.out.println("=======================");
     }
 }

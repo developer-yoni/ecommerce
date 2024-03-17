@@ -7,6 +7,7 @@ import com.example.ecommerce.global.response.ApiCode;
 import com.example.ecommerce.global.response.ApiException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -16,7 +17,7 @@ public class OptimisticLockStockService {
 
     private final StockRepository stockRepository;
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void decrease(Long id, Long quantity) {
 
         //1. stock 조회
