@@ -17,7 +17,7 @@ public class OptimisticLockStockService {
 
     private final StockRepository stockRepository;
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional
     public void decrease(Long id, Long quantity) {
 
         //1. stock 조회
