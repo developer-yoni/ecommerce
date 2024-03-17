@@ -296,7 +296,7 @@ class StockServiceTest {
     void NamedLock으로_동시성처리후_동시에100개감소() throws Exception {
 
         //given
-        int threadCount = 1;
+        int threadCount = 100;
         ExecutorService executorService = Executors.newFixedThreadPool(32);
         CountDownLatch countDownLatch = new CountDownLatch(threadCount);
 
@@ -336,7 +336,7 @@ class StockServiceTest {
 
         //then : 0개가 남는가
         Stock stock = stockRepository.findByIdAndEntityStatus(1L, EntityStatus.ACTIVE).orElseThrow();
-        assertThat(stock.getInventoryQuantity()).isEqualTo(99L);
+        assertThat(stock.getInventoryQuantity()).isEqualTo(0L);
     }
 
     @Test
