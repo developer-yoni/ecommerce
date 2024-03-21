@@ -7,6 +7,7 @@ import com.example.ecommerce.global.response.ApiCode;
 import com.example.ecommerce.global.response.ApiException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -25,6 +26,23 @@ public class PessimisticLockStockService {
                                      .orElseThrow(() -> new ApiException(ApiCode.CODE_000_0011, "재고 감소시, 요청값으로 들어온 stockId로 Stock 조회 실패"));
 
         System.out.println("--------- " + threadNumber + " 번째 쓰레드 락 획득 / 현재 재고 : " + stock.getInventoryQuantity());
+        //2. 재고 감소
+        stock.decreaseInventoryQuantity(quantity);
+
+        //3. 갱신된 값을 저장
+        stockRepository.saveAndFlush(stock);
+
+        // 마지막에 트랜잭션 커밋 되야 -> Pessimistic Lock이 반환된다
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void decreaseForRequiresNewTransaction(Long id, Long quantity) {
+
+        //1. stock 조회
+        Stock stock = stockRepository.findByIdAndEntityStatusWithPessimisticLock(id, EntityStatus.ACTIVE)
+                                     .orElseThrow(() -> new ApiException(ApiCode.CODE_000_0011, "재고 감소시, 요청값으로 들어온 stockId로 Stock 조회 실패"));
+
+        System.out.println("--------- " + Thread.currentThread().getName() + "  쓰레드 락 획득 / 현재 재고 : " + stock.getInventoryQuantity());
         //2. 재고 감소
         stock.decreaseInventoryQuantity(quantity);
 

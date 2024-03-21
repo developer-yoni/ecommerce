@@ -12,6 +12,7 @@ import com.example.ecommerce.domain.stock.Stock;
 import com.example.ecommerce.domain.stock.facade.LettuceLockStockFacade;
 import com.example.ecommerce.domain.stock.facade.NamedLockStockFacade;
 import com.example.ecommerce.domain.stock.facade.OptimisticLockStockFacade;
+import com.example.ecommerce.domain.stock.facade.PessmisticLockFacade;
 import com.example.ecommerce.domain.stock.facade.RedissonLockStockFacade;
 import com.example.ecommerce.domain.stock.repository.StockRepository;
 import com.example.ecommerce.global.enums.EntityStatus;
@@ -61,6 +62,9 @@ class StockServiceTest {
 
     @Autowired
     private PessimisticLockMarketStockFacade pessimisticLockMarketStockFacade;
+
+    @Autowired
+    private PessmisticLockFacade pessmisticLockFacade;
 
 
     @BeforeEach
@@ -542,6 +546,55 @@ class StockServiceTest {
                     System.out.println("++++++++++++++++++++++++");
                     System.out.println("InterruptException 발생");
                     System.out.println("++++++++++++++++++++++++");
+                } finally {
+
+                    countDownLatch.countDown();
+                }
+            });
+        }
+        countDownLatch.await(); // 모든 쓰레드가 다 리턴할 때까지 대기
+        long endTime = System.currentTimeMillis(); // 테스트 종료 시간 기록
+        System.out.println("[테스트 시간] : " + (endTime - startTime) + " ms");
+
+        //then : 0개가 남는가
+        Stock stock = stockRepository.findByIdAndEntityStatus(1L, EntityStatus.ACTIVE).orElseThrow();
+        assertThat(stock.getInventoryQuantity()).isEqualTo(0L);
+    }
+
+    @Test
+    @DisplayName("재고 감소5_1. 새로운 트랜잭션에서는 Entity Manager가 비워지는가")
+    void EntityManager를_비우지않으면_PessmisticLock이_제대로동작() throws Exception {
+
+        //given
+        int threadCount = 100;
+        ExecutorService executorService = Executors.newFixedThreadPool(32);
+        CountDownLatch countDownLatch = new CountDownLatch(threadCount);
+
+        AtomicLong atomicLong = new AtomicLong(0);
+        long startTime = System.currentTimeMillis(); // 테스트 시작 시간 기록
+
+        //when : 100개에서 동시에 100개를 감소시키면
+        for (int i = 0; i < threadCount; i++) {
+
+            executorService.submit(() -> {
+
+                try {
+
+                    pessmisticLockFacade.decrease(1L, 1L);
+
+                } catch (ApiException e) {
+
+                    System.out.println("$$$$$$$$$$$$$$$$$$$$$$$");
+                    if (e.getApiCode().equals(CODE_000_0013)) {
+
+                        System.out.println("Thread Name : " + Thread.currentThread().getName() + " / " + " 남은 재고가 0개 이므로 재고 감소 실패");
+                    }
+
+                    if (e.getApiCode().equals(CODE_000_0014)) {
+
+                        System.out.println("Thread Name : " + Thread.currentThread().getName() + " / " + " 남은 재고보다 더 큰 수량만큼 감소 불가");
+                    }
+                    System.out.println("$$$$$$$$$$$$$$$$$$$$$$$");
                 } finally {
 
                     countDownLatch.countDown();
