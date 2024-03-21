@@ -18,12 +18,13 @@ public class PessimisticLockStockService {
 
     // PessimisticLock은 트랜잭션이 커밋이나 롤백되면 자동 반환되니 -> 하나의 트랜잭션으로 묶는게 중요하다
     @Transactional
-    public void decrease(Long id, Long quantity) {
+    public void decrease(Long id, Long quantity, Long threadNumber) {
 
         //1. stock 조회
         Stock stock = stockRepository.findByIdAndEntityStatusWithPessimisticLock(id, EntityStatus.ACTIVE)
                                      .orElseThrow(() -> new ApiException(ApiCode.CODE_000_0011, "재고 감소시, 요청값으로 들어온 stockId로 Stock 조회 실패"));
 
+        System.out.println("--------- " + threadNumber + " 번째 쓰레드 락 획득 / 현재 재고 : " + stock.getInventoryQuantity());
         //2. 재고 감소
         stock.decreaseInventoryQuantity(quantity);
 

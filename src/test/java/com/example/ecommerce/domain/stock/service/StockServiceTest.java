@@ -19,6 +19,7 @@ import com.example.ecommerce.global.response.ApiException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicLong;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -200,6 +201,7 @@ class StockServiceTest {
         ExecutorService executorService = Executors.newFixedThreadPool(32);
         CountDownLatch countDownLatch = new CountDownLatch(threadCount);
 
+        AtomicLong atomicLong = new AtomicLong(0);
         long startTime = System.currentTimeMillis(); // 테스트 시작 시간 기록
 
         //when : 100개에서 동시에 100개를 감소시키면
@@ -209,7 +211,7 @@ class StockServiceTest {
 
                 try {
 
-                    pessimisticLockStockService.decrease(1L, 1L);
+                    pessimisticLockStockService.decrease(1L, 1L, atomicLong.getAndIncrement());
                 } catch (ApiException e) {
 
                     System.out.println("$$$$$$$$$$$$$$$$$$$$$$$");
