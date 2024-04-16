@@ -51,6 +51,9 @@ public class User extends BaseEntity {
     @Column(name = "email", unique = true)
     private String email;
 
+    @Column(name = "name")
+    private String name;
+
     @Enumerated(value = EnumType.STRING)
     @Column(name = "provider")
     private Provider provider; // GOOGLE, NAVER
@@ -71,7 +74,7 @@ public class User extends BaseEntity {
                    .build();
     }
 
-    public static User createAtOAuth2(String username, String password, Authority authority, Role role, String email, Provider provider, String providerId) {
+    public static User createAtOAuth2(String username, String password, Authority authority, Role role, String email, String name, Provider provider, String providerId) {
 
         return User.builder()
                    .username(username)
@@ -79,6 +82,7 @@ public class User extends BaseEntity {
                    .authority(authority)
                    .role(role)
                    .email(email)
+                   .name(name)
                    .provider(provider)
                    .providerId(providerId)
                    .build();

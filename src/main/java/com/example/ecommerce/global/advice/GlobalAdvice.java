@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.ErrorResponseException;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
@@ -32,6 +33,7 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @Slf4j
+@AllArgsConstructor
 @RestControllerAdvice
 public class GlobalAdvice extends ResponseEntityExceptionHandler {
 
@@ -50,6 +52,14 @@ public class GlobalAdvice extends ResponseEntityExceptionHandler {
 
         log.error("EXCEPTION = {}, MESSAGE = {}", e, e.getMessage(), e);
         return ResponseEntity.badRequest().body(ApiResponse.fail(ApiCode.CODE_000_0015));
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<Object> handleOAuth2AuthenticationException(OAuth2AuthenticationException e) {
+
+        log.error("EXCEPTION = {}, MESSAGE = {}", e, e.getMessage(), e);
+        return ResponseEntity.badRequest().body(e);
     }
 
     @Override

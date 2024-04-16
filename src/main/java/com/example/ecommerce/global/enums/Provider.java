@@ -85,7 +85,29 @@ public enum Provider {
             Map<String, Object> response = (Map<String, Object>) attributeMap.get("response");
             return (String) response.get("email");
         }
+    },
+    KAKAO("kakao", "KAKAO"){
+        @Override
+        public String getProviderId(Map<String, Object> attributeMap) {
+
+            return String.valueOf((Long)attributeMap.get("id"));
+        }
+
+        @Override
+        public String getName(Map<String, Object> attributeMap) {
+
+            Map<String, Object> properties = (Map<String, Object>) attributeMap.get("properties");
+            return (String) properties.getOrDefault("nickname", "testNicknameKakao");
+        }
+
+        @Override
+        public String getEmail(Map<String, Object> attributeMap) {
+
+            Map<String, Object> kakaoAccount = (Map<String, Object>) attributeMap.get("kakao_account");
+            return (String) kakaoAccount.getOrDefault("email", "test@kakao.com");
+        }
     };
+
 
     private final String value;
     private final String description;

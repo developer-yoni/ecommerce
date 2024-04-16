@@ -63,6 +63,7 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
                                             Authority.USER,
                                             Role.ROLE_USER,
                                             provider.getEmail(attributeMap),
+                                            provider.getName(attributeMap),
                                             provider,
                                             provider.getProviderId(attributeMap));
 
