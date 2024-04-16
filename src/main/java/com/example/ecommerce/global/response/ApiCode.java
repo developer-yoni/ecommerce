@@ -32,7 +32,8 @@ public enum ApiCode {
 	CODE_000_0011(false, HttpStatus.BAD_REQUEST, "NOT_FOUND_ENTITY", "엔티티 조회 불가"),
 	CODE_000_0012(false, HttpStatus.BAD_REQUEST, "BEAN_VALIDATION_FAIL", "Bean Validation 에러"),
 	CODE_000_0013(false, HttpStatus.BAD_REQUEST, "ALREADY_EXIST_SAME_USERNAME", "동일한 username으로 가입된 회원이 있습니다"),
-	CODE_000_0014(false, HttpStatus.BAD_REQUEST, "CONVERT_ENUM_FAIL", "열거형의 필드로 부터, 특정 열거형을 추출하는데 실패했습니다");
+	CODE_000_0014(false, HttpStatus.BAD_REQUEST, "CONVERT_ENUM_FAIL", "열거형의 필드로 부터, 특정 열거형을 추출하는데 실패했습니다"),
+	CODE_000_0015(false, HttpStatus.FORBIDDEN, "ACCESS_DENIED", "권한이 없습니다");
 	
 	private final Boolean    isSuccess;
 	private final HttpStatus httpStatus;

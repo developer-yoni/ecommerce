@@ -94,4 +94,9 @@ public class User extends BaseEntity {
             this.providerId = String.valueOf(id);
         }
     }
+
+    public void changeEmail(String email) {
+
+        this.email = email;
+    }
 }

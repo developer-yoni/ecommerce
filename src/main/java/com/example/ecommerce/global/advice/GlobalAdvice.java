@@ -1,5 +1,6 @@
 package com.example.ecommerce.global.advice;
 
+import com.example.ecommerce.global.response.ApiCode;
 import com.example.ecommerce.global.response.ApiException;
 import com.example.ecommerce.global.response.ApiResponse;
 import lombok.AllArgsConstructor;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.ErrorResponseException;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
@@ -37,11 +39,17 @@ public class GlobalAdvice extends ResponseEntityExceptionHandler {
      * [우리가 정의한 API Exception 상황 발생시에] -> 내부 세부 Status에 따른 실패 응답
      */
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<Object> handleApiException(ApiException e) {
 
         log.error("EXCEPTION = {}, MESSAGE = {}, INTERNAL_MESSAGE = {}", e, e.getApiCode().getMessage(), e.getInternalMessage(), e);
         return ResponseEntity.badRequest().body(ApiResponse.fail(e.getApiCode()));
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<Object> handleAccessDeniedException(AccessDeniedException e) {
+
+        log.error("EXCEPTION = {}, MESSAGE = {}", e, e.getMessage(), e);
+        return ResponseEntity.badRequest().body(ApiResponse.fail(ApiCode.CODE_000_0015));
     }
 
     @Override
