@@ -24,7 +24,7 @@ spring:
 
 slack:
   webhook:
-    url: https://hooks.slack.com/services/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
+    url: https://hooks.slack.com/services/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
 
 #  security:
 #    user:

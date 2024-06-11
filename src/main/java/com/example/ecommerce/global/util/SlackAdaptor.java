@@ -6,28 +6,31 @@ import com.slack.api.webhook.WebhookResponse;
 import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Component;
 
 @Slf4j
-public class SlackUtil {
+@Component
+public class SlackAdaptor {
 
     @Value("${slack.webhook.url}")
-    private static String SLACK_WEBHOOK_URL;
+    private String SLACK_WEBHOOK_URL;
 
     private static final Slack slackClient = Slack.getInstance();
 
     /**
      * [슬랙 메시지 전송]
      * */
-    public static void sendMessage(String title, String message) {
+    @Async
+    public void sendMessage(String title, String message) {
 
         Payload payload = Payload.builder()
             .text("*[" + title + "]*\n" + message)
             .build();
 
-        WebhookResponse webhookResponse = null;
         try {
 
-            webhookResponse = slackClient.send("https://hooks.slack.com/services/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", payload);
+            WebhookResponse webhookResponse = slackClient.send(SLACK_WEBHOOK_URL, payload);
             log.info("Slack Response : {}", webhookResponse);
         } catch (IOException e) {
 
